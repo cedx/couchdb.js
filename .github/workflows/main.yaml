@@ -1,0 +1,37 @@
+name: main
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      couchdb:
+        image: couchdb
+        ports: ["5984:5984"]
+        env:
+          COUCHDB_USER: ${{secrets.COUCHDB_USER}}
+          COUCHDB_PASSWORD: ${{secrets.COUCHDB_PASSWORD}}
+    steps:
+      - name: Fetch sources
+        uses: actions/checkout@v3
+      - name: Set up CouchDB
+        run: |
+          sleep 5
+          curl --request PUT 'http://${{secrets.COUCHDB_USER}}:${{secrets.COUCHDB_PASSWORD}}@localhost:5984/_replicator'
+          curl --request PUT 'http://${{secrets.COUCHDB_USER}}:${{secrets.COUCHDB_PASSWORD}}@localhost:5984/_users'
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          cache: npm
+          node-version: 20
+      - name: Install dependencies
+        run: npm ci
+      - name: Run tests
+        run: npm test
+        env:
+          COUCHDB_USER: ${{secrets.COUCHDB_USER}}
+          COUCHDB_PASSWORD: ${{secrets.COUCHDB_PASSWORD}}
+      - name: Collect code coverage
+        if: success()
+        uses: codecov/codecov-action@v3
+        with:
+          files: var/lcov.info
