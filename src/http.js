@@ -119,6 +119,73 @@ export const HttpMethod = Object.freeze({
 });
 
 /**
+ * Provides common HTTP status codes.
+ * @enum {number}
+ */
+export const HttpStatus = Object.freeze({
+
+	/**
+	 * The `OK` status.
+	 */
+	ok: 200,
+
+	/**
+	 * The `Created` status.
+	 */
+	created: 201,
+
+	/**
+	 * The `No Content` status.
+	 */
+	noContent: 204,
+
+	/**
+	 * The `Bad Request` status.
+	 */
+	badRequest: 400,
+
+	/**
+	 * The `Unauthorized` status.
+	 */
+	unauthorized: 401,
+
+	/**
+	 * The `Forbidden` status.
+	 */
+	forbidden: 403,
+
+	/**
+	 * The `Not Found` status.
+	 */
+	notFound: 404,
+
+	/**
+	 * The `Method Not Allowed` status.
+	 */
+	methodNotAllowed: 405,
+
+	/**
+	 * The `Unprocessable Entity` status.
+	 */
+	unprocessableEntity: 422,
+
+	/**
+	 * The `Internal Server Error` status.
+	 */
+	internalServerError: 500,
+
+	/**
+	 * The `Not Implemented` status.
+	 */
+	notImplemented: 501,
+
+	/**
+	 * The `Service Unavailable` status.
+	 */
+	serviceUnavailable: 503
+});
+
+/**
  * Provides common MIME types.
  * @enum {string}
  */
