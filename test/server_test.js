@@ -19,4 +19,13 @@ describe("Server", () => {
 			assert.equal(info.version.split(".").shift(), "3");
 		});
 	});
+
+	describe("uuids()", () => {
+		it("should return a list of UUIDs", async () => {
+			const uuids = await Promise.all([server.uuids(), server.uuids(3)]);
+			assert.equal(uuids[0].length, 1);
+			assert.equal(uuids[1].length, 3);
+			assert.ok(/[a-z\d]{32}/.test(uuids[0][0]));
+		});
+	});
 });

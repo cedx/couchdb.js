@@ -1,4 +1,5 @@
-import {http} from "./http.js";
+import {Database} from "./database.js";
+import {HttpError, HttpStatus, http} from "./http.js";
 
 /**
  * Represents a CouchDB server.
@@ -42,11 +43,6 @@ export class Server {
 	version;
 
 	/**
-	 * The remote API client.
-	 */
-	#remote = null;
-
-	/**
 	 * Creates a new server.
 	 * @param {string|URL} url The server URL, including username and password if required.
 	 * @param {ServerOptions} [options] An object providing values to initialize this instance.
@@ -64,38 +60,43 @@ export class Server {
 	 * The list of all databases.
 	 * @type {Promise<Database[]>}
 	 */
-	// get databases(get, never): Promise<List<Database>>;
-	// 	function get_databases() return remote.databases()
-	// 		.next(names -> List.fromArray(names.map(name -> new Database({name: name, server: this}))));
+	get databases() {
+		return http(new URL("_all_dbs", this.url))
+			.then(response => response.json())
+			.then((/** @type {string[]} */ names) => names.map(name => new Database(name, this)));
+	}
 
 	/**
 	 * The binary content for the `favicon.ico` site icon.
-	 * @type {Promise<File>}
+	 * @type {Promise<Blob>}
 	 */
-	// get favicon(get, never): Promise<Chunk>;
-	// 	inline function get_favicon() return remote.favicon();
+	get favicon() {
+		return http(new URL("favicon.ico", this.url)).then(response => response.blob());
+	}
 
 	/**
 	 * Value indicating whether this server is up.
 	 * @type {Promise<boolean>}
 	 */
-	// get isUp(get, never): Promise<Bool>;
-	// 	function get_isUp() return remote.isUp()
-	// 		.next(_ -> true)
-	// 		.tryRecover(error -> error.code == NotFound ? Success(false) : Failure(error));
+	get isUp() {
+		return http(new URL("_up", this.url)).then(() => true).catch(error => {
+			if (error instanceof HttpError && error.response.status == HttpStatus.notFound) return false;
+			throw error;
+		});
+	}
 
 	/**
 	 * Returns information about the current session.
 	 * @type {Promise<Session>}
 	 */
-	// get session(get, never): Promise<Session>;
+	// get session: Promise<Session>;
 	// 	function get_session() return new Session({server: this}).fetch();
 
 	/**
 	 * The list of active tasks.
 	 * @type {Promise<Task[]>}
 	 */
-	// get tasks(get, never): Promise<List<Task>>;
+	// get tasks: Promise<List<Task>>;
 	// 	function get_tasks() return remote.tasks().next(List.fromArray);
 
 	/**
@@ -110,7 +111,7 @@ export class Server {
 
 	/**
 	 * Fetches information about this server.
-	 * @returns {Promise<Server>}
+	 * @returns {Promise<Server>} The server information.
 	 */
 	async fetch() {
 		const response = await http(this.url);
@@ -119,15 +120,21 @@ export class Server {
 			features: json.features,
 			gitSha: json.git_sha,
 			uuid: json.uuid,
-			vendor: json.vendor?.name,
+			vendor: json.vendor.name,
 			version: json.version
 		});
 	}
 
 	/**
 	 * Requests one or more Universally Unique Identifiers (UUIDs) from this server.
+	 * @param {number} [count] The number of UUIDs to generate.
+	 * @returns {Promise<string[]>} The generated UUIDs.
 	 */
-	// uuids(count = 1) return remote.uuids({count: count}).next(response -> List.fromArray(response.uuids));
+	async uuids(count = 1) {
+		const response = await http(new URL(`_uuids?count=${count}`, this.url));
+		const json = /** @type {{uuids: string[]}} */ (await response.json());
+		return json.uuids;
+	}
 }
 
 /**
@@ -143,10 +150,10 @@ export class Server {
 /**
  * Provides information about a server.
  * @typedef {object} ServerInfo
- * @property {string} [couchdb] A custom welcome message.
- * @property {string[]} [features] The list of features supported by the server.
- * @property {string} [git_sha] The Git revision.
- * @property {string} [uuid] The server identifier.
- * @property {{name: string}} [vendor] Meta information about the vendor.
- * @property {string} [version] The version number.
+ * @property {string} couchdb A custom welcome message.
+ * @property {string[]} features The list of features supported by the server.
+ * @property {string} git_sha The Git revision.
+ * @property {string} uuid The server identifier.
+ * @property {{name: string}} vendor Meta information about the vendor.
+ * @property {string} version The version number.
  */
