@@ -92,7 +92,7 @@ export class Session {
 			handlers: json.info.authentication_handlers,
 			method: json.info.authenticated,
 			token: this.token,
-			user: json.userCtx.name == null ? null : new User(json.userCtx.name, json.userCtx.roles)
+			user: json.userCtx.name == null ? null : new User({name: json.userCtx.name, roles: json.userCtx.roles})
 		});
 	}
 }

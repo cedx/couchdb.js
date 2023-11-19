@@ -13,8 +13,8 @@ describe("Server", () => {
 	describe("databases", () => {
 		it("should return the list of all databases", async () => {
 			const databases = await server.databases;
-			assert(databases.some(db => db.name == "_replicator"));
-			assert(databases.some(db => db.name == "_users"));
+			assert(databases.some(database => database.name == "_replicator"));
+			assert(databases.some(database => database.name == "_users"));
 		});
 	});
 
@@ -29,8 +29,8 @@ describe("Server", () => {
 		it("should return `true` if the server is up", async () => assert(await server.isUp));
 	});
 
-	describe("db()", () => {
-		it("should return a database object", () => assert.equal(server.db("foo").name, "foo"));
+	describe("database()", () => {
+		it("should return a database object", () => assert.equal(server.database("foo").name, "foo"));
 	});
 
 	describe("fetch()", () => {

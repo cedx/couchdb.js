@@ -1,6 +1,7 @@
 import {Database} from "./database.js";
 import {HttpError, HttpHeader, HttpMethod, HttpStatus, MimeType} from "./http.js";
 import {Session} from "./session.js";
+import {Task} from "./task.js";
 
 /**
  * Represents a CouchDB server.
@@ -98,20 +99,28 @@ export class Server {
 	 * The list of active tasks.
 	 * @type {Promise<Task[]>}
 	 */
-	// get tasks: Promise<List<Task>>;
-	// 	function get_tasks() return remote.tasks().next(List.fromArray);
+	get tasks() {
+		return this.request("_active_tasks")
+			.then(response => response.json())
+			.then((/** @type {import("./task.js").TaskInfo[]} */ tasks) => tasks.map(task => Task.fromJson(task)));
+	}
 
 	/**
 	 * Initiates a new session for the specified user credentials.
+	 * @param {string} name The user name.
+	 * @param {string} password The user password.
+	 * @returns {Promise<Session>} The newly created session.
 	 */
-	// authenticate(name: String, password: String) return new Session({server: this}).create(name, password);
+	authenticate(name, password) {
+		return new Session(this).create(name, password);
+	}
 
 	/**
 	 * Returns an object for performing operations on a database.
 	 * @param {string} name The database name.
 	 * @returns {Database} The database object.
 	 */
-	db(name) {
+	database(name) {
 		return new Database(name, this);
 	}
 
