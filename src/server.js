@@ -1,5 +1,6 @@
 import {Database} from "./database.js";
 import {HttpError, HttpHeader, HttpMethod, HttpStatus, MimeType} from "./http.js";
+import {Session} from "./session.js";
 
 /**
  * Represents a CouchDB server.
@@ -89,8 +90,9 @@ export class Server {
 	 * Returns information about the current session.
 	 * @type {Promise<Session>}
 	 */
-	// get session: Promise<Session>;
-	// 	function get_session() return new Session({server: this}).fetch();
+	get session() {
+		return new Session(this).fetch();
+	}
 
 	/**
 	 * The list of active tasks.
@@ -168,16 +170,6 @@ export class Server {
 }
 
 /**
- * Defines the options of a {@link Server} instance.
- * @typedef {object} ServerOptions
- * @property {string[]} [features] The list of features supported by the server.
- * @property {string} [gitSha] The Git revision.
- * @property {string} [uuid] The server identifier.
- * @property {string} [vendor] Meta information about the vendor.
- * @property {string} [version] The version number.
- */
-
-/**
  * Provides information about a server.
  * @typedef {object} ServerInfo
  * @property {string} couchdb A custom welcome message.
@@ -186,4 +178,14 @@ export class Server {
  * @property {string} uuid The server identifier.
  * @property {{name: string}} vendor Meta information about the vendor.
  * @property {string} version The version number.
+ */
+
+/**
+ * Defines the options of a {@link Server} instance.
+ * @typedef {object} ServerOptions
+ * @property {string[]} [features] The list of features supported by the server.
+ * @property {string} [gitSha] The Git revision.
+ * @property {string} [uuid] The server identifier.
+ * @property {string} [vendor] Meta information about the vendor.
+ * @property {string} [version] The version number.
  */
