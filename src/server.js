@@ -1,8 +1,9 @@
+import {http} from "./http.js";
 
 /**
  * Represents a CouchDB server.
  */
-class Server {
+export class Server {
 
 	/**
 	 * The list of features supported by this server.
@@ -41,41 +42,13 @@ class Server {
 	version;
 
 	/**
-	 * The list of all databases.
+	 * The remote API client.
 	 */
-	// public var databases(get, never): Promise<List<Database>>;
-	// 	function get_databases() return remote.databases()
-	// 		.next(names -> List.fromArray(names.map(name -> new Database({name: name, server: this}))));
-
-	/**
-	 * The binary content for the `favicon.ico` site icon.
-	 */
-	// public var favicon(get, never): Promise<Chunk>;
-	// 	inline function get_favicon() return remote.favicon();
-
-	/**
-	 * Value indicating whether this server is up.
-	 */
-	// public var isUp(get, never): Promise<Bool>;
-	// 	function get_isUp() return remote.isUp()
-	// 		.next(_ -> true)
-	// 		.tryRecover(error -> error.code == NotFound ? Success(false) : Failure(error));
-
-	/**
-	 * Returns information about the current session.
-	 */
-	// public var session(get, never): Promise<Session>;
-	// 	function get_session() return new Session({server: this}).fetch();
-
-	/**
-	 * The list of active tasks.
-	 */
-	// public var tasks(get, never): Promise<List<Task>>;
-	// 	function get_tasks() return remote.tasks().next(List.fromArray);
+	#remote = null;
 
 	/**
 	 * Creates a new server.
-	 * @param {string} url The server URL, including username and password if required.
+	 * @param {string|URL} url The server URL, including username and password if required.
 	 * @param {ServerOptions} [options] An object providing values to initialize this instance.
 	 */
 	constructor(url, options = {}) {
@@ -86,6 +59,44 @@ class Server {
 		this.vendor = options.vendor ?? "";
 		this.version = options.version ?? "";
 	}
+
+	/**
+	 * The list of all databases.
+	 * @type {Promise<Database[]>}
+	 */
+	// get databases(get, never): Promise<List<Database>>;
+	// 	function get_databases() return remote.databases()
+	// 		.next(names -> List.fromArray(names.map(name -> new Database({name: name, server: this}))));
+
+	/**
+	 * The binary content for the `favicon.ico` site icon.
+	 * @type {Promise<File>}
+	 */
+	// get favicon(get, never): Promise<Chunk>;
+	// 	inline function get_favicon() return remote.favicon();
+
+	/**
+	 * Value indicating whether this server is up.
+	 * @type {Promise<boolean>}
+	 */
+	// get isUp(get, never): Promise<Bool>;
+	// 	function get_isUp() return remote.isUp()
+	// 		.next(_ -> true)
+	// 		.tryRecover(error -> error.code == NotFound ? Success(false) : Failure(error));
+
+	/**
+	 * Returns information about the current session.
+	 * @type {Promise<Session>}
+	 */
+	// get session(get, never): Promise<Session>;
+	// 	function get_session() return new Session({server: this}).fetch();
+
+	/**
+	 * The list of active tasks.
+	 * @type {Promise<Task[]>}
+	 */
+	// get tasks(get, never): Promise<List<Task>>;
+	// 	function get_tasks() return remote.tasks().next(List.fromArray);
 
 	/**
 	 * Initiates a new session for the specified user credentials.
@@ -99,16 +110,18 @@ class Server {
 
 	/**
 	 * Fetches information about this server.
+	 * @returns {Promise<Server>}
 	 */
-	fetch() {
-		// return remote.fetch().next(json -> new Server({
-		// 	features: json.features,
-		// 	gitSha: json.git_sha,
-		// 	url: url,
-		// 	uuid: json.uuid,
-		// 	vendor: json.vendor.name,
-		// 	version: json.version
-		// }));
+	async fetch() {
+		const response = await http(this.url);
+		const json = /** @type {ServerInfo} */ (await response.json());
+		return new Server(this.url, {
+			features: json.features,
+			gitSha: json.git_sha,
+			uuid: json.uuid,
+			vendor: json.vendor?.name,
+			version: json.version
+		});
 	}
 
 	/**
