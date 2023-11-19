@@ -1,3 +1,5 @@
+import {User} from "./user.js";
+
 /**
  * Represents a CouchDB session.
  */
@@ -45,6 +47,28 @@ export class Session {
 		this.token = options.token ?? "";
 		this.user = options.user ?? null;
 	}
+
+	/**
+	 * Deletes this session.
+	 */
+	async delete() {
+		// TODO
+		return Promise.resolve();
+	}
+
+	/**
+	 * Fetches information about this session.
+	 * @returns {Promise<Session>} The session information.
+	 */
+	async fetch() {
+		const json = /** @type {SessionInfo} */ (await (await this.server.request("_session")).json());
+		return new Session(this.server, {
+			handlers: json.info.authentication_handlers,
+			method: json.info.authenticated,
+			token: this.token,
+			user: json.userCtx.name == null ? null : new User(json.userCtx.name, json.userCtx.roles)
+		});
+	}
 }
 
 /**
@@ -65,17 +89,17 @@ export const SessionHandler = Object.freeze({
 });
 
 /**
+ * Provides information about a session.
+ * @typedef {object} SessionInfo
+ * @property {{authenticated?: string, authentication_handlers: string[]}} info The server authentication configuration.
+ * @property {import("./user.js").UserInfo} userCtx The user context for the current user.
+ */
+
+/**
  * Defines the options of a {@link Session} instance.
  * @typedef {object} SessionOptions
  * @property {SessionHandler[]} [handlers] The enabled authentication handlers.
  * @property {SessionHandler|null} [method] The handler used to initiate this session.
  * @property {string} [token] The authorization token.
  * @property {import("./user.js").User|null} [user] The session user.
- */
-
-/**
- * Provides information about a session.
- * @typedef {object} SessionInfo
- * @property {{authenticated?: string, authentication_handlers: string[]}} info The server authentication configuration.
- * @property {import("./user.js").UserInfo} userCtx The user context for the current user.
  */
