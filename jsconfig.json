@@ -1,0 +1,14 @@
+{
+	"include": ["example/*.js", "scripts/*.js", "src/**/*.js", "test/**/*.js"],
+	"compilerOptions": {
+		"baseUrl": ".",
+		"checkJs": true,
+		"esModuleInterop": true,
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"resolveJsonModule": true,
+		"paths": {"@cedx/couchdb": ["src"]},
+		"strict": true,
+		"target": "ESNext"
+	}
+}
