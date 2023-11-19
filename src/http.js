@@ -201,29 +201,3 @@ export const MimeType = Object.freeze({
 	 */
 	textPlain: "text/plain"
 });
-
-/**
- * Fetches a resource from the network.
- * @param {URL} url The resource URL.
- * @param {RequestInit} [options] The fetch options.
- * @returns {Promise<Response>} The HTTP response.
- */
-export async function http(url, options) {
-	const request = new Request(`${url.origin}${url.pathname}${url.search}`, options);
-	if (!request.headers.has(HttpHeader.accept)) request.headers.set(HttpHeader.accept, MimeType.applicationJson);
-
-	if (url.username.length) {
-		const credentials = url.password.length ? `${url.username}:${url.password}` : url.username;
-		request.headers.set(HttpHeader.authorization, `Basic ${Buffer.from(credentials).toString("base64")}`);
-	}
-
-	const methods = /** @type {string[]} */ ([HttpMethod.patch, HttpMethod.post, HttpMethod.put]);
-	if (methods.includes(request.method)) {
-		const [mimeType] = (request.headers.get(HttpHeader.contentType) ?? "").split(";");
-		if (!mimeType || mimeType == MimeType.textPlain) request.headers.set(HttpHeader.contentType, MimeType.applicationJson);
-	}
-
-	const response = await fetch(request);
-	if (!response.ok) throw new HttpError(request, response);
-	return response;
-}
