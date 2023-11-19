@@ -1,0 +1,58 @@
+{
+	"bugs": "https://github.com/cedx/couchdb.js/issues",
+	"description": "An opinionated Apache CouchDB client.",
+	"homepage": "https://github.com/cedx/couchdb.js",
+	"license": "MIT",
+	"name": "@cedx/couchdb",
+	"repository": "cedx/couchdb.js",
+	"type": "module",
+	"version": "0.1.0",
+	"author": {
+		"email": "cedric@belin.io",
+		"name": "Cédric Belin",
+		"url": "https://belin.io"
+	},
+	"devDependencies": {
+		"@types/node": "^20.9.0",
+		"c8": "^8.0.1",
+		"eslint": "^8.53.0",
+		"typedoc": "^0.25.3",
+		"typescript": "^5.2.2"
+	},
+	"engines": {
+		"node": ">=20.0.0"
+	},
+	"exports": {
+		"types": "./lib/index.d.ts",
+		"import": "./src/index.js"
+	},
+	"files": [
+		"lib/",
+		"src/"
+	],
+	"imports": {
+		"#couchdb": {
+			"types": "./lib/index.d.ts",
+			"import": "./src/index.js"
+		}
+	},
+	"keywords": [
+		"api",
+		"client",
+		"couchdb",
+		"database",
+		"db",
+		"document",
+		"nosql"
+	],
+	"scripts": {
+		"build": "tsc --project src/jsconfig.json",
+		"clean": "node scripts/clean.js",
+		"doc": "typedoc --options etc/typedoc.json && node scripts/doc.js",
+		"dist": "npm run clean && npm run build",
+		"lint": "tsc --project jsconfig.json && eslint --config=etc/eslint.json example scripts src test",
+		"postpublish": "node scripts/publish.js",
+		"prepack": "npm run dist",
+		"test": "c8 --all --include=src/**/*.js --report-dir=var --reporter=lcovonly node --test --test-reporter=spec"
+	}
+}
