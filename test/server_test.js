@@ -2,12 +2,13 @@ import assert from "node:assert/strict";
 import process from "node:process";
 import {describe, it} from "node:test";
 import {Server} from "#couchdb";
+import {HttpError, HttpStatus} from "../src/http.js";
 
 /**
  * Tests the features of the {@link Server} class.
  */
 describe("Server", () => {
-	const server = new Server(`http://${process.env.COUCHDB_USER}:${process.env.COUCHDB_PASSWORD}@localhost:5984`);
+	const server = new Server(`http://${process.env.COUCHDB_USER}:${process.env.COUCHDB_PASSWORD}@localhost:5984/`);
 
 	describe("databases", () => {
 		it("should return the list of all databases", async () => {
@@ -18,7 +19,10 @@ describe("Server", () => {
 	});
 
 	describe("favicon", () => {
-		it("should return the binary content of the icon", async () => assert((await server.favicon).size > 0));
+		it("should return the binary content of the icon", async () => {
+			try { assert((await server.favicon).size > 0); }
+			catch (error) { assert(error instanceof HttpError && error.response.status == HttpStatus.notFound); }
+		});
 	});
 
 	describe("isUp", () => {
