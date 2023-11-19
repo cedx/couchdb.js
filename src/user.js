@@ -17,12 +17,11 @@ export class User {
 
 	/**
 	 * Creates a new user.
-	 * @param {string} name The user name.
-	 * @param {string[]} [roles] The user roles.
+	 * @param {UserOptions} [options] An object providing values to initialize this instance.
 	 */
-	constructor(name, roles = []) {
-		this.name = name;
-		this.roles = roles;
+	constructor(options = {}) {
+		this.name = options.name ?? "";
+		this.roles = options.roles ?? [];
 	}
 }
 
@@ -31,4 +30,11 @@ export class User {
  * @typedef {object} UserInfo
  * @property {string|null} name The user name.
  * @property {string[]} roles The user roles.
+ */
+
+/**
+ * Provides information about a user.
+ * @typedef {object} UserOptions
+ * @property {string} [name] The user name.
+ * @property {string[]} [roles] The user roles.
  */

@@ -1,3 +1,4 @@
+import {HttpMethod} from "./http.js";
 import {User} from "./user.js";
 
 /**
@@ -49,11 +50,36 @@ export class Session {
 	}
 
 	/**
-	 * Deletes this session.
+	 * Initiates a new session for the specified user credentials.
+	 * @param {string} name The user name.
+	 * @param {string} password The user password.
+	 * @returns {Promise<Session>} The newly created session.
 	 */
-	async delete() {
-		// TODO
-		return Promise.resolve();
+	async create(name, password) {
+		const response = await this.server.request("_session", {
+			method: HttpMethod.post,
+			// TODO: headers contentLength
+			body: JSON.stringify({name, password})
+		});
+
+		const cookies = response.headers.getSetCookie();
+		console.log(cookies); // TODO
+		if (cookies.length == 0) throw Error("TODO");
+
+		return new Session(this.server, {
+			handlers: this.handlers,
+			method: this.method,
+			token: cookies[0].split("=").pop(),
+			user: new User(await response.json())
+		});
+	}
+
+	/**
+	 * Deletes this session.
+	 * @returns {Promise<Response>} Resolves when the session has been deleted.
+	 */
+	delete() {
+		return this.server.request("_session", {method: HttpMethod.delete});
 	}
 
 	/**
