@@ -50,7 +50,7 @@ export class Server {
 	constructor(url, options = {}) {
 		this.features = options.features ?? [];
 		this.gitSha = options.gitSha ?? "";
-		this.url = new URL(url.slice(-1) == "/" ? url : `${url}/`);
+		this.url = new URL(url.endsWith("/") ? url : `${url}/`);
 		this.uuid = options.uuid ?? "";
 		this.vendor = options.vendor ?? "";
 		this.version = options.version ?? "";
