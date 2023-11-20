@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import process from "node:process";
 import {describe, it} from "node:test";
 import {Server, Session, SessionHandler} from "#couchdb";
+import {HttpError, HttpStatus} from "../src/http.js";
 
 /**
  * Tests the features of the {@link Session} class.
@@ -11,9 +12,21 @@ describe("Session", () => {
 
 	describe("create()", () => {
 		const session = new Session(server);
-		const userName = process.env.COUCHDB_USER;
+		const userName = /** @type {string} */ (process.env.COUCHDB_USER);
 
-		it("TODO", async () => {
+		it("should reject if the credentials are invalid", async () => assert.rejects(() => session.create("foo", "bar"), error => {
+			assert(error instanceof HttpError);
+			assert.equal(error.response.status, HttpStatus.unauthorized);
+			return true;
+		}));
+
+		it("should resolve with an authorization token if the credentials are valid", async () => {
+			const newSession = await session.create(userName, /** @type {string} */ (process.env.COUCHDB_PASSWORD));
+			assert(newSession.token.length > 60);
+
+			const user = /** @type {import("#couchdb").User} */ (newSession.user);
+			assert.equal(user.name, userName);
+			assert(user.roles.some(role => role == "_admin"));
 		});
 	});
 

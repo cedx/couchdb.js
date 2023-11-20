@@ -58,18 +58,17 @@ export class Session {
 	async create(name, password) {
 		const response = await this.server.request("_session", {
 			method: HttpMethod.post,
-			// TODO: headers contentLength
 			body: JSON.stringify({name, password})
 		});
 
 		const cookies = response.headers.getSetCookie();
-		console.log(cookies); // TODO
-		if (cookies.length == 0) throw Error("TODO");
+		if (cookies.length == 0) throw Error('No "Set-Cookie" header found.');
 
+		const cookie = /** @type {string} */ (cookies[0].split(";").shift());
 		return new Session(this.server, {
 			handlers: this.handlers,
 			method: this.method,
-			token: cookies[0].split("=").pop(),
+			token: cookie.split("=").pop(),
 			user: new User(await response.json())
 		});
 	}
