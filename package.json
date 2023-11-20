@@ -49,7 +49,7 @@
 		"clean": "node scripts/clean.js",
 		"doc": "typedoc --options etc/typedoc.json && node scripts/doc.js",
 		"dist": "npm run clean && npm run build",
-		"lint": "tsc --project jsconfig.json && eslint --config=etc/eslint.json example scripts src test",
+		"lint": "tsc --project jsconfig.json && eslint --config=etc/eslint.json scripts src test",
 		"postpublish": "node scripts/publish.js",
 		"prepack": "npm run dist",
 		"test": "node --test --test-reporter=lcov --test-reporter-destination=var/lcov.info --test-reporter=spec --test-reporter-destination=stdout"

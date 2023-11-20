@@ -24,9 +24,9 @@ describe("Session", () => {
 			const newSession = await session.create(userName, /** @type {string} */ (process.env.COUCHDB_PASSWORD));
 			assert(newSession.token.length > 60);
 
-			const user = /** @type {import("#couchdb").User} */ (newSession.user);
-			assert.equal(user.name, userName);
-			assert(user.roles.some(role => role == "_admin"));
+			const {user} = newSession;
+			assert.equal(user?.name, userName);
+			assert(user?.roles.some(role => role == "_admin"));
 		});
 	});
 

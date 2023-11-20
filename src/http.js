@@ -73,7 +73,7 @@ export const HttpHeader = Object.freeze({
 	/**
 	 * The `Content-Type` header.
 	 */
-	contentType: "Content-Type",
+	contentType: "Content-Type"
 });
 
 /**

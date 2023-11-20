@@ -1,0 +1,11 @@
+{
+	"$schema": "https://typedoc.org/schema.json",
+	"entryPoints": ["../src/index.js"],
+	"excludePrivate": true,
+	"gitRevision": "main",
+	"hideGenerator": true,
+	"name": "CouchDB for JS",
+	"out": "../docs/api",
+	"readme": "none",
+	"tsconfig": "../src/jsconfig.json"
+}
