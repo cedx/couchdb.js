@@ -152,7 +152,7 @@ export class Server {
 
 		if (endpoint.username.length) {
 			const credentials = endpoint.password.length ? `${endpoint.username}:${endpoint.password}` : endpoint.username;
-			request.headers.set(HttpHeader.authorization, `Basic ${btoa(credentials)}`);
+			request.headers.set(HttpHeader.authorization, `Basic ${Buffer.from(credentials).toString("base64")}`);
 		}
 
 		const methods = /** @type {string[]} */ ([HttpMethod.patch, HttpMethod.post, HttpMethod.put]);
