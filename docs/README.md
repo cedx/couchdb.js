@@ -1,7 +1,7 @@
 # CouchDB for JS
 An opinionated [Apache CouchDB](https://couchdb.apache.org) client for [JavaScript](https://developer.mozilla.org/docs/Web/JavaScript).
 
-!> **Not ready** for production!
+!> **Work in progress**: not ready for production!
 
 ## Quick start
 Install the latest version of **CouchDB for JS** with [npm](https://getcomposer.org) package manager:
